@@ -72,7 +72,7 @@ describe('Home Page', () => {
     it('renders main heading and file input', () => {
         render(<Home />)
 
-        expect(screen.getByText('Loam Bio Takehome: Geojson Upload')).toBeInTheDocument()
+        expect(screen.getByText('Paddock Analyser')).toBeInTheDocument()
         expect(screen.getByTestId('mock-file-input')).toBeInTheDocument()
         expect(screen.getByText('No GeoJSON loaded yet.')).toBeInTheDocument()
     })
@@ -135,7 +135,7 @@ describe('Home Page', () => {
         render(<Home />)
 
         // The component should render without crashing even if it receives invalid data
-        expect(screen.getByText('Loam Bio Takehome: Geojson Upload')).toBeInTheDocument()
+        expect(screen.getByText('Paddock Analyser')).toBeInTheDocument()
         expect(screen.getByText('No GeoJSON loaded yet.')).toBeInTheDocument()
         
         // The test passes if the component renders without throwing an error

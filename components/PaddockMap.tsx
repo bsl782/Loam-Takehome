@@ -19,22 +19,30 @@ export default function PaddockMap({ feature }: { feature: Feature }) {
     const [center, setCenter] = useState<[number, number]>([-35, 150]);
 
     useEffect(() => {
-        if (feature && feature.geometry) {
-            // Calculates the center from turf function
-            const centroidFeature = centroid(feature);
-            if (
-                centroidFeature &&
-                centroidFeature.geometry &&
-                Array.isArray(centroidFeature.geometry.coordinates)
-            ) {
-                const coords = centroidFeature.geometry.coordinates as [number, number];
+        try {
+            if (feature && feature.geometry) {
+                // Calculates the center from turf function
+                const centroidFeature = centroid(feature);
+                if (
+                    centroidFeature &&
+                    centroidFeature.geometry &&
+                    Array.isArray(centroidFeature.geometry.coordinates)
+                ) {
+                    const coords = centroidFeature.geometry.coordinates as [number, number];
 
-                // GeoJSON coordinates are [lng, lat], but Leaflet expects [lat, lng]
-                const newCenter: [number, number] = [coords[1], coords[0]];
+                    // GeoJSON coordinates are [lng, lat], but Leaflet expects [lat, lng]
+                    const newCenter: [number, number] = [coords[1], coords[0]];
 
-                setCenter(newCenter);
+                    setCenter(newCenter);
+                }
             }
         }
+        catch (error) {
+            console.error("Error calculating centroid:", error);
+            // Fallback to a default center if centroid calculation fails
+            setCenter([-35, 150]);
+        }
+
     }, [feature]);
 
     return (

@@ -6,7 +6,7 @@ import FileInput from "@/components/FileInput";
 import ProjectInfoCards from "@/components/ProjectInfoCards";
 import { ToastContainer, toast } from 'react-toastify';
 
-import type { FeatureCollection } from 'geojson';
+import type { FeatureCollection, Feature } from 'geojson';
 import type { GroupedProjectFeatures } from '@/types/GeoJson'
 
 import { isValidFeatureCollection } from '@/utils/validation';
@@ -18,12 +18,24 @@ export default function Home() {
     const parsedJson = JSON.parse(geojson);
 
     if (isValidFeatureCollection(parsedJson)) {
-      const groupedProjects = groupProjects(parsedJson.features);
-      console.log("Grouped Projects:", groupedProjects);
+      const filteredFeatures = filterInvalidFeatures(parsedJson.features);
+      const groupedProjects = groupProjects(filteredFeatures);
       setGroupedProjects(groupedProjects);
     } else {
       toast.error("Invalid GeoJSON format");
     }
+  };
+
+  const filterInvalidFeatures = (features: Feature[]) => {
+    const filteredFeatures = features.filter((feature) =>
+      feature &&
+      feature.geometry &&
+      feature.properties &&
+      feature.geometry.type === 'Polygon' &&
+      Array.isArray(feature.geometry.coordinates) &&
+      feature.geometry.coordinates[0].length > 4 // Ensure at least 4 points for a polygon
+    );
+    return filteredFeatures;
   };
 
   const groupProjects = (features: FeatureCollection['features']) => {
@@ -51,7 +63,7 @@ export default function Home() {
     <>
       <ToastContainer autoClose={3000} pauseOnHover={false} />
       <main className="flex flex-col gap-4 items-center min-h-screen pt-10 px-4">
-        <h1 className="text-3xl font-bold mb-2 text-center">Loam Bio Takehome: Geojson Upload</h1>
+        <h1 className="text-3xl font-bold mb-2 text-center">Paddock Analyser</h1>
         <div>
           <FileInput onFileParsed={handleFileChange}></FileInput>
         </div>
